@@ -69,9 +69,14 @@ function createData(name, type, val) {
    }
    break;
    case "mAsset": {
+      let local = window.location;
+      var currentUrl = local.protocol + `//`
+                     + local.hostname 
+                     + (local.port ? ':' + local.port : '') + `/`;
+
       let asset = val.map(e => {
          let link = document.createElement('a');
-         link.href = e.content;
+         link.href = currentUrl + e.content;
          link.target = '_blank';
          link.textContent = e.type + ":" + (e.name !== '' ? e.name : e.content);
          return link.outerHTML;
