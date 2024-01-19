@@ -1,4 +1,5 @@
 import { config } from './config.js';
+import * as Hook from './hook.js';
 
 let meta = document.getElementsByClassName("metadata-container")[0];
 
@@ -71,14 +72,9 @@ function createData(name, type, val) {
    }
    break;
    case "mAsset": {
-      let local = window.location;
-      var currentUrl = local.protocol + `//`
-                     + local.hostname 
-                     + (local.port ? ':' + local.port : '') + `/`;
-
       let asset = val.map(e => {
          let link = document.createElement('a');
-         link.href = currentUrl + e.content;
+         link.href = Hook.url + '/' + e.content;
          link.target = '_blank';
          link.textContent = e.type + ":" + (e.name !== '' ? e.name : e.content);
          return link.outerHTML;
@@ -128,12 +124,12 @@ function processingData(data) {
 
 async function getSql() {
    let result = null;
-   let id = window.frameElement?.parentElement?.parentElement.dataset.nodeId;
+   let id = Hook.id;
    let data = {
 	     stmt: `SELECT root_id FROM blocks WHERE id = '${id}'`
 	  };
    
-   await fetch("/api/query/sql", {
+   await Hook.fetch("/api/query/sql", {
 	  method: 'POST',
 	  body: JSON.stringify(data),
       headers: {
@@ -158,7 +154,7 @@ async function getSql() {
       return;
    }
 
-   fetch("/api/av/getAttributeViewKeys", {
+   Hook.fetch("/api/av/getAttributeViewKeys", {
       body: JSON.stringify(data),
       method: 'POST',
       headers: {
