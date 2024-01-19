@@ -1,5 +1,7 @@
 import { config } from './config.js';
 
+let meta = document.getElementsByClassName("metadata-container")[0];
+
 function createDiv() { return document.createElement("div"); }
 
 function createKey(data) {
@@ -12,9 +14,9 @@ function createKey(data) {
 function createValue(mod, data) {
    let value = createDiv();
    if (mod === 1) {
-   value.className = "value-single-line";
+      value.className = "value-single-line";
    } else if (mod === 2) {
-   value.className = "value-multiple";
+      value.className = "value-multiple";
    }
    
 
@@ -27,11 +29,11 @@ function createValue(mod, data) {
       value.appendChild(val);
    })
    } else {
-   let val = createDiv();
-   val.className = "value";
-   val.innerHTML = data;
+      let val = createDiv();
+      val.className = "value";
+      val.innerHTML = data;
 
-   value.appendChild(val);
+      value.appendChild(val);
    }
    return value;
 }
@@ -39,14 +41,14 @@ function createValue(mod, data) {
 function DateToString(timestamp) {
    return new Date(timestamp)
       .toLocaleString('zh-CN', {
-      year: 'numeric', 
-      month: '2-digit', 
-      day: '2-digit', 
-      hour: '2-digit', 
-      minute: '2-digit'
+         year: 'numeric', 
+         month: '2-digit', 
+         day: '2-digit', 
+         hour: '2-digit', 
+         minute: '2-digit'
       })
       .replace(/\//g, '-');
-}
+   }
 
 function createData(name, type, val) {
    let result = createDiv();
@@ -114,6 +116,16 @@ function createData(name, type, val) {
    return result;
 }
 
+function processingData(data) {
+   data.forEach(e => {
+      let key   = e.key.name;
+      let type  = e.values[0].type
+      if (type === 'select') type = 'mSelect'
+      let value = e.values[0][type]
+      meta.appendChild(createData(key, type, value))
+   })
+}
+
 async function getSql() {
    let result = null;
    let id = window.frameElement?.parentElement?.parentElement.dataset.nodeId;
@@ -130,45 +142,40 @@ async function getSql() {
    })
    .then(resp => resp.json())
    .then(data => {
+      if (data.data.length === 0) return;
       result = data.data[0].root_id;
    })
+   .catch(error => {
+      console.log("Fetch error:", error);
+   });
    return result;
 }
 
-
 (async () => {
-   let meta = document.getElementsByClassName("metadata-container")[0];
-   let data = {
-   id: await getSql()
+   let data = { id: await getSql() }
+   if (data.id === null) {
+      console.log("Sql is not found id, please flash page.");
+      return;
    }
 
    fetch("/api/av/getAttributeViewKeys", {
-   body: JSON.stringify(data),
-   method: 'POST',
-   headers: {
+      body: JSON.stringify(data),
+      method: 'POST',
+      headers: {
          Authorization: `Token ${config.token}`,
-   }
+      }
    })
    .then(response => {
-   if (!response.ok) {
-      throw new Error("Network response was not ok");
-   }
-   return response.json();
+      if (!response.ok) {
+         throw new Error("Network response was not ok");
+      }
+      return response.json();
    })
    .then(data => {
-   console.log(data.data[0].keyValues); // 打印响应数据
-   data.data[0].keyValues.forEach(e => {
-      let key   = e.key.name;
-      let type  = e.values[0].type
-      if (type === 'select') type = 'mSelect'
-      let value = e.values[0][type]
-      console.log(key, type, value)
-      meta.appendChild(createData(key, type, value))
-
-   })
+      processingData(data.data[0].keyValues)
    })
    .catch(error => {
-   console.error("Fetch error:", error);
+      console.error("Fetch error:", error);
    });
 
 })();
