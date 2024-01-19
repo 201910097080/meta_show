@@ -1,7 +1,27 @@
-import { config } from './config.js';
 import * as Hook from './hook.js';
 
-let meta = document.getElementsByClassName("metadata-container")[0];
+
+function setWidth(width) {
+   if (window.frameElement === null) return;
+   window.frameElement.style.width = `${width}px`;
+}
+
+function setHeight(height) {
+   if (window.frameElement === null) return;
+   window.frameElement.style.height = `${height}px`;
+}
+
+function DateToString(timestamp) {
+   return new Date(timestamp)
+   .toLocaleString('zh-CN', {
+      year: 'numeric', 
+      month: '2-digit', 
+      day: '2-digit', 
+      hour: '2-digit', 
+      minute: '2-digit'
+   })
+   .replace(/\//g, '-');
+}
 
 function createDiv() { return document.createElement("div"); }
 
@@ -38,18 +58,6 @@ function createValue(mod, data) {
    }
    return value;
 }
-
-function DateToString(timestamp) {
-   return new Date(timestamp)
-      .toLocaleString('zh-CN', {
-         year: 'numeric', 
-         month: '2-digit', 
-         day: '2-digit', 
-         hour: '2-digit', 
-         minute: '2-digit'
-      })
-      .replace(/\//g, '-');
-   }
 
 function createData(name, type, val) {
    let result = createDiv();
@@ -112,66 +120,10 @@ function createData(name, type, val) {
    return result;
 }
 
-function processingData(data) {
-   data.forEach(e => {
-      let key   = e.key.name;
-      let type  = e.values[0].type
-      if (type === 'select') type = 'mSelect'
-      let value = e.values[0][type]
-      meta.appendChild(createData(key, type, value))
-   })
+
+export {
+   setWidth,
+   setHeight,
+   DateToString,
+   createData,
 }
-
-async function getSql() {
-   let result = null;
-   let id = Hook.id;
-   let data = {
-	     stmt: `SELECT root_id FROM blocks WHERE id = '${id}'`
-	  };
-   
-   await Hook.fetch("/api/query/sql", {
-	  method: 'POST',
-	  body: JSON.stringify(data),
-      headers: {
-         Authorization: `Token ${config.token}`,
-      }
-   })
-   .then(resp => resp.json())
-   .then(data => {
-      if (data.data.length === 0) return;
-      result = data.data[0].root_id;
-   })
-   .catch(error => {
-      console.log("Fetch error:", error);
-   });
-   return result;
-}
-
-(async () => {
-   let data = { id: await getSql() }
-   if (data.id === null) {
-      console.log("Sql is not found id, please flash page.");
-      return;
-   }
-
-   Hook.fetch("/api/av/getAttributeViewKeys", {
-      body: JSON.stringify(data),
-      method: 'POST',
-      headers: {
-         Authorization: `Token ${config.token}`,
-      }
-   })
-   .then(response => {
-      if (!response.ok) {
-         throw new Error("Network response was not ok");
-      }
-      return response.json();
-   })
-   .then(data => {
-      processingData(data.data[0].keyValues)
-   })
-   .catch(error => {
-      console.error("Fetch error:", error);
-   });
-
-})();

@@ -11,10 +11,9 @@ export function fetch(link, options) {
    return window.fetch(url + link, options);
 }
 
-
 if (local.port === '5500') {
    url = "http://127.0.0.1:6806";
-   id = '20240119143426-qjwd5s8';
+   id = '20240119165619-739g1w9';
 }
    
 export { 
