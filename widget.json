@@ -3,5 +3,9 @@
   "author": "junqingp",
   "url": "https://github.com/201910097080/meta_show",
   "version": "1.1",
-  "minAppVersion": "2.11.0"
+  "minAppVersion": "2.11.0",
+  "description": {
+    "default": "Display the attributes corresponding to the primary keys in their respective documents within the database.",
+    "zh_CN": "将数据库中的主键对应的属性在其自身文档内展示"
+}
 }
