@@ -96,8 +96,6 @@ function createData(name, type, val) {
       input.disabled = true;
       
       input = val.checked ? input.outerHTML.replace(">", " checked/>") : input.outerHTML;
-      
-      console.log(input)
 
       value = createValue(1, input);
    }
