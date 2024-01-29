@@ -59,11 +59,17 @@ function createValue(mod, data) {
    return value;
 }
 
+function checkContents(contents) {
+   return contents === null || contents === undefined || contents.length === 0;
+}
+
 function createData(name, type, val) {
    let result = createDiv();
    result.className = "key-value-pair";
    let key = createKey(name)
    let value;
+
+   console.log(name,type, val)
    
    switch(type) {
    case "mSelect": {
@@ -106,10 +112,16 @@ function createData(name, type, val) {
    }
    break;
    case "relation": {
+      if (checkContents(val.contents)) {
+         return null;
+      }
       value = createValue(2, val.contents)
    }
    break;
    default: 
+      if (checkContents(val.contents)) {
+         return null;
+      }
       value = createValue(1, val.content);
    }
 

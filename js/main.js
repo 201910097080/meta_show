@@ -15,7 +15,12 @@ function processingData(data) {
       let type  = e.values[0].type
       if (type === 'select') type = 'mSelect'
       let value = e.values[0][type]
-      meta.appendChild(Common.createData(key, type, value))
+
+      let div = Common.createData(key, type, value)
+
+      if (div === null) return;
+
+      meta.appendChild(div)
    })
    Common.setHeight(document.body.clientHeight + 16)
 }
