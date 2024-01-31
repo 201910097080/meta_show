@@ -2,7 +2,7 @@
   "name": "meta_show",
   "author": "junqingp",
   "url": "https://github.com/201910097080/meta_show",
-  "version": "1.2",
+  "version": "1.3",
   "minAppVersion": "2.11.0",
   "description": {
     "default": "Display the attributes corresponding to the primary keys in their respective documents within the database.",
