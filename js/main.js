@@ -10,7 +10,7 @@ let meta = document.getElementsByClassName("metadata-container")[0];
 })();
 
 function processingData(data) {
-   data.forEach(e => {
+      data.forEach(e => {
       let key   = e.key.name;
       let type  = e.values[0].type
       if (type === 'select') type = 'mSelect'

@@ -5,53 +5,53 @@
   <style>
     body {
       margin: 0;
+      position: relative;
     }
-
+    .metadata-container {
+      display: table;
+      width: calc(150%);
+    }
     .key-value-pair {
-      margin-bottom: 10px;
+      display: table-row;
     }
 
     .key {
-      float: left;
-      margin-right: 10px;
+      display: table-cell;
       font-weight: bold;
-      width: 200px;
+      position: relative;
+      width: calc(18%);
+
+      padding: calc(0.25%) calc(1%);
+      vertical-align: top;
     }
 
-    .value-single-line:hover,
-    .value-multiple:hover,
+    .value {
+      position: relative;
+      display: inline-block;
+      width: calc(70%);
+      margin-left: calc(1%);
+      padding: calc(0.25%) calc(1%);
+    }
+
+    .value:hover,
     .key:hover {
       background-color: lightgrey;
       border-radius: 10px;
     }
 
-    .value,
-    .value-multiple,
-    .value-single-line {
-      overflow: hidden;
-      width: 600px;
-    }
-
-    .key,
-    .value-multiple,
-    .value-single-line {
-      padding-left: 10px;
-    }
-
-    .value-multiple .value {
-      display: block;
-      margin-bottom: 6px;
-    }
-
-    .value-single-line .value {
-      display: inline;
-      margin-right: 10px;
+    .line {
+      margin: 0;
+      position: absolute;
     }
   </style>
 </head>
 
 <body>
-  <div class="metadata-container"/>
+  <div class="metadata-container">
+    <div class="line">
+      |
+    </div>
+  </div>
 
 </body>
 

@@ -34,24 +34,18 @@ function createKey(data) {
 
 function createValue(mod, data) {
    let value = createDiv();
-   if (mod === 1) {
-      value.className = "value-single-line";
-   } else if (mod === 2) {
-      value.className = "value-multiple";
-   }
+   value.className = "value";
    
 
    if (Array.isArray(data)) {
    data.forEach(v => {
       let val = createDiv();
-      val.className = "value";
       val.innerHTML = v;
 
       value.appendChild(val);
    })
    } else {
       let val = createDiv();
-      val.className = "value";
       val.innerHTML = data;
 
       value.appendChild(val);
@@ -116,6 +110,18 @@ function createData(name, type, val) {
          return null;
       }
       value = createValue(2, val.contents)
+   }
+   break;
+   case "rollup": {
+      if (checkContents(val.contents)) {
+         return null;
+      }
+      let asset = val.contents.map(e => {
+         console.log(e)
+         let type = e.type;
+         return `${e[type].content}%`;
+      });
+      value = createValue(2, asset)
    }
    break;
    default: 
