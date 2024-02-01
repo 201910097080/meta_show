@@ -9,7 +9,7 @@
     }
     .metadata-container {
       display: table;
-      width: calc(150%);
+      width: calc(100%);
     }
     .key-value-pair {
       display: table-row;
@@ -27,8 +27,8 @@
 
     .value {
       position: relative;
-      display: inline-block;
-      width: calc(70%);
+      display: block;
+      width: calc(80%);
       margin-left: calc(1%);
       padding: calc(0.25%) calc(1%);
     }
@@ -43,14 +43,32 @@
       margin: 0;
       position: absolute;
     }
+
+    div > .Tag:first-of-type {
+      margin-left: 0;
+    }
+
+    .Tag {
+      display: inline-block;
+      margin: 1.5px 6px;
+      padding: 1px 2px;
+      border: 10px;
+      background-color: rgb(209, 233, 237);
+      border-radius: 5px;
+    }
+
+    .Single {
+      display: inline;
+    }
+
+    .Single, .Multiple {
+      white-space: pre-wrap; /* 保留空白字符，允许自动换行 */
+    }
   </style>
 </head>
 
 <body>
   <div class="metadata-container">
-    <div class="line">
-      |
-    </div>
   </div>
 
 </body>

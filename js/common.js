@@ -11,15 +11,21 @@ function setHeight(height) {
    window.frameElement.style.height = `${height}px`;
 }
 
-function DateToString(timestamp) {
-   return new Date(timestamp)
-   .toLocaleString('zh-CN', {
+function DateToString(timestamp, isDate = false) {
+   let format = {
       year: 'numeric', 
       month: '2-digit', 
       day: '2-digit', 
-      hour: '2-digit', 
-      minute: '2-digit'
-   })
+   }
+   if (!isDate) {
+      format = {
+         ...format, 
+         hour: '2-digit', 
+         minute: '2-digit'
+      }
+   }
+   return new Date(timestamp)
+   .toLocaleString('zh-CN', format)
    .replace(/\//g, '-');
 }
 
@@ -32,29 +38,35 @@ function createKey(data) {
    return key;
 }
 
-function createValue(mod, data) {
+function createValue(data, classMod) {
    let value = createDiv();
    value.className = "value";
-   
 
    if (Array.isArray(data)) {
    data.forEach(v => {
       let val = createDiv();
       val.innerHTML = v;
 
+      classMod.forEach(e => {
+         val.classList.add(e);
+      })
       value.appendChild(val);
    })
    } else {
       let val = createDiv();
       val.innerHTML = data;
 
+      classMod.forEach(e => {
+         val.classList.add(e);
+      })
+
       value.appendChild(val);
    }
    return value;
 }
 
-function checkContents(contents) {
-   return contents === null || contents === undefined || contents.length === 0;
+function checkVal(val) {
+   return val === null || val === undefined || val.length === 0;
 }
 
 function createData(name, type, val) {
@@ -62,20 +74,18 @@ function createData(name, type, val) {
    result.className = "key-value-pair";
    let key = createKey(name)
    let value;
-
-   console.log(name,type, val)
    
    switch(type) {
    case "mSelect": {
-      value = createValue(1, val.map(e => e.content))
+      value = createValue(val.map(e => e.content), ["Tag"])
    }
    break;
    case "date": {
-      let dateString = DateToString(val.content);
-      if (val.hasOwnProperty("content2")) {
-         dateString += " ~ " + DateToString(val.content2);
+      let dateString = DateToString(val.content, val.isNotTime);
+      if (val.isNotEmpty2) {
+         dateString += " ~ " + DateToString(val.content2, val.isNotTime);
       }
-      value = createValue(1, dateString);
+      value = createValue(dateString, ["Single"]);
 
    }
    break;
@@ -87,7 +97,7 @@ function createData(name, type, val) {
          link.textContent = e.type + ":" + (e.name !== '' ? e.name : e.content);
          return link.outerHTML;
       });
-      value = createValue(2, asset);
+      value = createValue(asset, ["Multiple"]);
    }
    break;
    case "checkbox": {
@@ -97,38 +107,47 @@ function createData(name, type, val) {
       
       input = val.checked ? input.outerHTML.replace(">", " checked/>") : input.outerHTML;
 
-      value = createValue(1, input);
+      value = createValue(input, ["Single"]);
    }
    break;
    case "updated":
    case "created": {
-      value = createValue(1, DateToString(val.content));
+      value = createValue(DateToString(val.content), ["Single"]);
    }
    break;
    case "relation": {
-      if (checkContents(val.contents)) {
+      if (checkVal(val.contents)) {
          return null;
       }
-      value = createValue(2, val.contents)
+      value = createValue(val.contents, ["Multiple"])
    }
    break;
    case "rollup": {
-      if (checkContents(val.contents)) {
+      if (checkVal(val.contents)) {
          return null;
       }
       let asset = val.contents.map(e => {
-         console.log(e)
          let type = e.type;
-         return `${e[type].content}%`;
+         if (type === 'number')
+            return `${e[type].content}%`;
+         else
+            return e[type].content;
       });
-      value = createValue(2, asset)
+      value = createValue(asset, ["Multiple"])
+   }
+   break;
+   case "text": {
+      if (checkVal(val.content)) {
+         return null;
+      }
+      value = createValue(val.content, ["Multiple"])
    }
    break;
    default: 
-      if (checkContents(val.contents)) {
+      if (checkVal(val.content)) {
          return null;
       }
-      value = createValue(1, val.content);
+      value = createValue(val.content, ["Single"]);
    }
 
    result.appendChild(key);
